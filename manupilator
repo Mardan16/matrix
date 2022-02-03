@@ -1,0 +1,900 @@
+#include<iostream>
+#include<fstream>
+#include<string>
+#include<math.h>
+
+using namespace std;
+
+/*Function Prototypes*/
+int** matrix1(int*,int*,int,int);
+int** matrix2(int*, int*,int,int);
+int** fMatrix1(int*, int*, int, int);
+int** fMatrix2(int*, int*, int, int);
+void callm1(int**,int,int,int,int);
+void callm2(int**, int, int, int, int);
+void operationMenu(int**, int**, int, int, int, int, int, int);
+int sumOfValues(int**, int, int, int, int);
+int  productOfValues(int**, int, int, int, int);
+int* rowAvgOfMatrix(int**, int, int, int, int);
+int* colAvgOfMatrix(int**, int, int, int, int);
+int AvgOfMatrix(int**, int, int, int, int);
+void rowSortOfMatrix(int**, int, int, int, int);
+void columnSortOfMatrix(int**, int, int, int, int);
+void scalarAdition(int**, int, int, int, int);
+int** matrixAdition(int**, int**, int, int, int, int, int, int);
+void scalarSubtraction(int**, int, int, int, int);
+int** matrixSubtraction(int**, int**, int, int, int, int, int, int);
+void scalarMultiplication(int**, int, int, int, int);
+int** matrixMultiplication(int**, int**, int, int, int, int, int, int);
+void scalarDivision(int**, int, int, int, int);
+void matrixTranspose(int**, int, int, int, int);
+int determinant(int**, int);
+void dett(int**, int** , int*, int);
+int** inverse(int**, int, int, int);
+
+
+int main()
+{
+	int chose = 0, rows1 = 0, columns1 = 0, rows2 = 0, columns2 = 0, i = 0, j = 0;
+	int** m1, ** m2;
+	cout << "Welcome to my Matrix Manupulator\nThis is a Matrix calculator\nYou can chose between options by clicking their menu number to perform different actions\n";
+	while (true)	/*loop to make the program run untill user wants to exit*/
+	{
+		cout << "1. Start Program.\n2. End program.\n";
+		cin >> chose;
+		if (chose == 1)
+		{
+			do		/*loop for the 1st menu to take input */
+			{
+				cout << "\n1. Enter marix manually. \n2. Enter matrixes through files. \n3. Exit.\n";
+				cin >> chose;
+				if (chose == 1)
+				{
+					m1 = matrix1(&rows1, &columns1, i, j);
+					m2 = matrix2(&rows2, &columns2, i, j);
+					callm1(m1, rows1, columns1, i, j);
+					cout << endl;
+					callm2(m2, rows2, columns2, i, j);
+					cout << endl;
+					operationMenu(m1, m2, rows1, rows2,columns1,columns2, i, j);
+
+				}
+				else if (chose == 2)
+				{
+					/*Functions to read data from file*/
+				}
+				else if (chose == 3)
+					break;
+				else
+					cout << "Enter one of the given options\n";
+			} while (true);
+			
+
+		}
+		else if (chose == 2)
+		{
+			cout << "Thank you for using my program" << endl;
+			break;
+		}
+		else
+		{
+			cout << "Enter one of the given options\n";
+		}
+	}
+	system("pause");
+	return 0;
+}
+
+/*Defining Functions*/
+/*Input of matrix1 by user*/
+int** matrix1(int* r, int* c,int i,int j)
+{
+	cout << "\n\nMatrix 1";
+	cout << "\nEnter rows : ";
+	cin >> *r;
+	cout << "Enter columns : ";
+	cin >> *c;
+	/*making dynamic array*/
+	int** matrix = new int* [*r];
+	for ( i = 0; i < *r; i++)
+	{
+		matrix[i] = new int[*c];
+	}
+	cout << "\nEnter Matrix 1\n";
+	for  ( i = 0;  i < *r;  i++)
+	{
+		for ( j = 0; j < *c; j++)
+		{
+			cout << "Enter [" << i << "] [" << j << "] : ";
+			cin >> matrix[i][j];
+		}
+	}
+	return matrix;
+}
+
+/*User input of Matrix 2*/
+int** matrix2(int* r, int* c , int i, int j)
+{
+	cout << "\n\nMatrix 2";
+	cout << "\nEnter rows :";
+	cin >> *r;
+	cout << "Enter columns : ";
+	cin >> *c;
+	/*making dynamic array*/
+	int** matrix = new int* [*r];
+	for (i = 0; i < *r; i++)
+	{
+		matrix[i] = new int[*c];
+	}
+	cout << "\nEnter Matrix 1\n";
+	for (i = 0; i < *r; i++)
+	{
+		for (j = 0; j < *c; j++)
+		{
+			cout << "Enter [" << i << "] [" << j << "] : ";
+			cin >> matrix[i][j];
+		}
+	}
+	return matrix;
+}
+
+/*Taking input from files*/
+/*Matrix 1 from file*/
+int** fMatrix1(int* r, int* c, int i, int j)
+{
+	
+	
+	return 0;
+}
+
+int** fMatrix2(int* r, int* c, int i, int j)
+{
+	return 0;
+}
+
+/*to get values from matrix*/
+void callm1(int** m,int r, int c, int i, int j)
+{
+	cout << "\n\t\t\t1st matrix\n";
+	for (i = 0; i < r; i++)
+	{
+		for (j = 0; j < c; j++)
+		{
+			cout << m[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
+
+void callm2(int** m, int r, int c, int i, int j)
+{
+	cout << "\n\t\t\t2nd matrix\n";
+	for (i = 0; i < r; i++)
+	{
+		for (j = 0; j < c; j++)
+		{
+			cout << m[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
+
+/*Operations to be performed on matrices*/
+void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, int j)
+{
+	int chose=0,Avg=0,det=0;
+	int* avg=nullptr,**result=nullptr;
+	do
+	{	
+		cout << "\n\n------------------------------------------------------------------------------------------ - \n\n";
+		cout << "\nEnter one of the following operations\n1. Sum of Matrix (sum of all values)\n2. Product of Matrix (product of all values)\n3. Row-wise Average\n4. Column-wise Average\n5. Average of whole Matrix\n6. Row-wise sorting of Matrix\n7. Column-wise sorting of Matrix\n8. Scalar Matrix Addition\n9. Addition of two Matrices\n10. Scalar Matrix Subtraction\n11. Subtraction of two Matrices\n12. Scalar Matrix Multiplication\n13. Multiplication of two Matrices\n14. Scalar Matrix Division\n15. Matrix transpose\n16. Matrix determinant\n17. Matrix Inverse\n18. Go back\n";
+		cin >> chose;
+		if (chose==1)
+		{
+			cout << "\nEnter a matrix \n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+				cout << "Sum of Matrix 1 is : " << sumOfValues(m1, r1, c1, i, j) << endl;
+			else if (chose == 2)
+				cout << "Sum of Matrix 2 is : " << sumOfValues(m2, r2, c2, i, j) << endl;
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose==2)
+		{
+			cout << "\nEnter a matrix \n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+				cout << "Product of Matrix 1 is : " << productOfValues(m1, r1, c1, i, j) << endl;
+			else if (chose == 2)
+				cout << "Product of Matrix 2 is : " << productOfValues(m2, r2, c2, i, j) << endl;
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose == 3)
+		{
+			cout << "\nEnter the matrix\n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+			{
+				avg = rowAvgOfMatrix(m1, r1, c1, i, j);
+				cout << "Matrix 1\n";
+				for ( i = 0; i < r1; i++)
+				{
+					cout << "Average of row " << i + 1 << " is :" << *(avg+i) << endl;;
+				}
+			}
+			else if (chose == 2)
+			{
+				avg = rowAvgOfMatrix(m2, r2, c2, i, j);
+				cout << "Matrix 2\n";
+				for (i = 0; i < r2; i++)
+				{
+					cout << "Average of row " << i + 1 << " is :" << *(avg+i) << endl;;
+				}
+			}
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose == 4)
+		{
+			cout << "\nEnter the matrix\n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+			{
+				avg = colAvgOfMatrix(m1, r1, c1, i, j);
+				cout << "Matrix 1\n";
+				for (i = 0; i < r1; i++)
+				{
+					cout << "Average of column " << i + 1 << " is :" << *(avg + i) << endl;;
+				}
+			}
+			else if (chose == 2)
+			{
+				avg = colAvgOfMatrix(m2, r2, c2, i, j);
+				cout << "Matrix 2\n";
+				for (i = 0; i < r2; i++)
+				{
+					cout << "Average of column " << i + 1 << " is :" << *(avg + i) << endl;;
+				}
+			}
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose == 5)
+		{
+			cout << "\nEnter the matrix \n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+			{
+				Avg = AvgOfMatrix(m1, r1, c1, i, j);
+				cout << "Matrix 1\n";
+				cout << "Average of Matrix 1 is : " << Avg << endl;
+			}
+			else if (chose == 2)
+			{
+				Avg = AvgOfMatrix(m2, r2, c2, i, j);
+				cout << "Matrix 2\n";
+				cout << "Average of Matrix 2 " << " is : " << Avg << endl;;
+
+			}
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose == 6)
+		{
+			cout << "\nEnter the matrix\n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+			{
+				rowSortOfMatrix(m1, r1, c1, i, j);
+				cout << "Matrix 1 after sorting of rows\n\n";
+				callm1(m1,r1,c1,i,j);
+			}
+			else if (chose == 2)
+			{
+				rowSortOfMatrix(m2, r2, c2, i, j);
+				cout << "Matrix 2 after sorting of rows\n\n";
+				callm2(m2, r2, c2, i, j);
+			}
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose == 7)
+		{
+			cout << "\nEnter the matrix\n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+			{
+				columnSortOfMatrix(m1, r1, c1, i, j);
+				cout << "Matrix 1 after sorting of columns\n\n";
+				callm1(m1, r1, c1, i, j);
+			}
+			else if (chose == 2)
+			{
+				columnSortOfMatrix(m2, r2, c2, i, j);
+				cout << "Matrix 2 after sorting of columns\n\n";
+				callm2(m2, r2, c2, i, j);
+			}
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose == 8)
+		{
+			cout << "\nEnter the matrix\n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+					break;
+				}
+				scalarAdition(m1, r1, c1, i, j);
+				cout << "\nAfter Scalar adition\n";
+				callm1(m1, r1, c1, i, j);
+			}
+			else if (chose == 2)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+						break;
+				}
+				scalarAdition(m2, r2, c2, i, j);
+				cout << "\nAfter Scalar adition\n";
+				callm1(m1, r1, c1, i, j);
+			}
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose == 9)
+		{
+			cout << "\nMatrix 1 + Matrix 2\n";
+				if (!(r1 == r2&&c1==c2))
+				{
+					cout << "Rows and columns of matrix and 2 are not equal\n";
+					break;
+				}
+				result=matrixAdition(m1,m2, r1,r2, c1,c2, i, j);
+				cout << "\nAfter Matrix adition\n";
+				for ( i = 0; i < r1; i++)
+				{
+					for ( j = 0; j < c1; j++)
+					{
+						cout << result[i][j] << " ";
+					}
+					cout << endl;
+				}
+			
+		}
+		else if (chose == 10)
+		{
+			cout << "\nEnter the matrix\n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+					break;
+				}
+				scalarSubtraction(m1, r1, c1, i, j);
+				cout << "\nAfter Scalar Subtraction\n";
+				callm1(m1, r1, c1, i, j);
+			}
+			else if (chose == 2)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+					break;
+				}
+				scalarSubtraction(m2, r2, c2, i, j);
+				cout << "\nAfter Scalar Subtraction\n";
+				callm1(m1, r1, c1, i, j);
+			}
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose == 11)
+		{
+			cout << "\nMatrix 1 - Matrix 2\n";
+			if (!(r1 == r2 && c1 == c2))
+			{
+				cout << "Rows and columns of matrix and 2 are not equal\n";
+				break;
+			}
+			result = matrixSubtraction(m1, m2, r1, r2, c1, c2, i, j);
+			cout << "\nAfter Matrix Subtraction\n";
+			for (i = 0; i < r1; i++)
+			{
+				for (j = 0; j < c1; j++)
+				{
+					cout << result[i][j] << " ";
+				}
+				cout << endl;
+			}
+		}
+		else if (chose == 12)
+		{
+			cout << "\nEnter the matrix\n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+					break;
+				}
+				scalarMultiplication(m1, r1, c1, i, j);
+				cout << "\nAfter Scalar Multiplication\n";
+				callm1(m1, r1, c1, i, j);
+			}
+			else if (chose == 2)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+					break;
+				}
+				scalarMultiplication(m2, r2, c2, i, j);
+				cout << "\nAfter Scalar Multiplication\n";
+				callm1(m1, r1, c1, i, j);
+			}
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose == 13)
+		{
+			if (!(c1==r2))
+			{
+				cout << "Columns of matrix 1 should be equal to Rows of matrix 2";
+				break;
+			}
+			result = matrixMultiplication(m1, m2, r1, r2, c1, c2, i, j);
+			cout << "\nAfter Matrix multiplication\n";
+			for (i = 0; i < r1; i++)
+			{
+				for (j = 0; j < c1; j++)
+				{
+					cout << result[i][j] << " ";
+				}
+				cout << endl;
+			}
+		}
+		else if (chose == 14)
+		{
+			cout << "\nEnter the matrix\n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+					break;
+				}
+				scalarDivision(m1, r1, c1, i, j);
+				cout << "\nAfter Scalar Division\n";
+				callm1(m1, r1, c1, i, j);
+			}
+			else if (chose == 2)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+					break;
+				}
+				scalarDivision(m1, r1, c1, i, j);
+				cout << "\nAfter Scalar Division\n";
+				callm1(m1, r1, c1, i, j);
+			}
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose == 15)
+		{
+			cout << "\nEnter the matrix\n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+					break;
+				}
+				matrixTranspose(m1, r1, c1, i, j);
+				cout << "\nAfter Transpose\n";
+				callm1(m1, r1, c1, i, j);
+			}
+			else if (chose == 2)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+					break;
+				}
+				matrixTranspose(m2, r2, c2, i, j);
+				cout << "\nAfter Transpose\n";
+				callm1(m1, r1, c1, i, j);
+			}
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose == 16)
+		{
+			cout << "\nEnter the matrix\n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+					break;
+				}
+				det = determinant(m1, r1);
+				cout << "\nDeterminant of 1st matrix is : " << det << endl;
+			}
+			else if (chose == 2)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+					break;
+				}
+				det = determinant(m2, r2);
+				cout << "\nDeterminant of 1st matrix is : "<<det<<endl;
+				
+			}
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose == 17)
+		{
+			cout << "\nEnter the matrix\n 1 or 2\n";
+			cin >> chose;
+			if (chose == 1)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+					break;
+				}
+				result = inverse(m1, r1,i,j);
+				cout << "\nInverse of 1st matrix is : " << det << endl;
+				for ( i = 0; i < r1; i++)
+				{
+					for ( j = 0; j < r1; j++)
+					{
+						cout<<result[i][j] << " ";
+					}
+					cout << endl;
+				}
+			}
+			else if (chose == 2)
+			{
+				if (!(r1 == c1))
+				{
+					cout << "Rows and columns of matrix are not equal\n";
+					break;
+				}
+				result = inverse(m2, r2, i, j);
+				cout << "\nInverse of 1st matrix is : " << det << endl;
+				for (i = 0; i < r2; i++)
+				{
+					for (j = 0; j < r2; j++)
+					{
+						cout << result[i][j] << " ";
+					}
+					cout << endl;
+				}
+			}
+			else
+				cout << "You have entered the wrong option\n";
+		}
+		else if (chose == 18)
+		{
+			break;
+		}
+		else
+		{
+		cout << "Type of of the given options" << endl;
+		}
+
+	} while (true);
+}
+
+
+
+/*Sum of all values in the matrix*/
+int sumOfValues(int** m, int r, int c, int i, int j)
+{
+	int sum = 0;
+	for ( i = 0; i < r; i++)
+	{
+		for ( j = 0; j < c; j++)
+		{
+			sum += m[i][j];
+		}
+	}
+	return sum;
+}
+
+/*Product of values in matrix */
+int  productOfValues(int** m, int r, int c, int i, int j)
+{
+	int product = 1;
+	for (i = 0; i < r; i++)
+	{
+		for (j = 0; j < c; j++)
+		{
+			product *= m[i][j];
+		}
+	}
+	return product;
+}
+
+/*Average of rows of Matrix*/
+int* rowAvgOfMatrix(int** m, int r, int c, int i, int j)
+{
+	int* avg=new int[r];
+	int temp=0;
+	for ( i = 0; i < r; i++)
+	{
+		temp = 0;
+		for ( j = 0; j < c; j++)
+		{
+			temp += m[i][j];
+		}
+		avg[i] = temp;
+		avg[i] /= c;
+	}
+	return avg;
+}
+
+/*Average of columns of Matrix*/
+int* colAvgOfMatrix(int** m, int r, int c, int i, int j)
+{
+	int* avg = new int[c];
+	int temp = 0;
+	for (i = 0; i < c; i++)
+	{
+		temp = 0;
+		for (j = 0; j < r; j++)
+		{
+			temp += m[j][i];
+		}
+		avg[i] = temp;
+		avg[i] /= r;
+	}
+	return avg;
+}
+
+/*Average of all values of the matrix*/
+int AvgOfMatrix(int** m, int r, int c, int i, int j)
+{
+	int avg = 0;
+	
+	for (i = 0; i < c; i++)
+	{
+		
+		for (j = 0; j < r; j++)
+		{
+			avg += m[j][i];
+		}
+		
+	}
+	avg =avg/ (r * c);
+	return avg;
+}
+
+/*Row sorting of Matrix*/
+void rowSortOfMatrix(int** m, int r, int c, int i, int j)
+{
+	int temp = 0;
+	for (int i = 0; i < r; i++)
+	{
+		for (int j = 0; j < c; j++)
+		{
+			for (int k = 0; k < c - j - 1; k++)
+			{
+				if (m[i][k] > m[i][k + 1])
+				{
+					swap(m[i][k], m[i][k + 1]);
+				}
+			}
+		}
+	}
+}
+
+/*Column sorting of matrix*/
+void columnSortOfMatrix(int** m, int r, int c, int i, int j)
+{
+	int temp = 0;
+	for (int i = 0; i < r; i++)
+	{
+		for (int j = 0; j < c; j++)
+		{
+			for (int k = 0; k < r -j-1; k++)
+			{
+				if (m[k][i] > m[k+1][i])
+				{
+					swap(m[k][i], m[k+1][i]);
+				}
+			}
+		}
+	}
+}
+
+/*Scalar adition*/
+void scalarAdition(int** m, int r, int c, int i, int j)
+{
+	int scalarElement = 0;
+	cout << "Enter scalar element :";
+	cin >> scalarElement;
+	for ( i = 0; i < r; i++)
+	{
+		m[i][i] += scalarElement;
+	}
+
+}
+
+/*Adition of 2 matrix*/
+int** matrixAdition(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, int j)
+{
+	int** sum = new int* [r1];
+	for (i = 0; i < r1; i++)
+		sum[i] = new int[c1];
+	for ( i = 0; i < r1; i++)
+	{
+		for ( j = 0; j < c1; j++)
+		{
+			sum[i][j] = m1[i][j] + m2[i][j];
+		}
+	}
+	return sum;
+}
+
+/*Scalar subtraction*/
+void scalarSubtraction(int** m, int r, int c, int i, int j)
+{
+	int scalarElement = 0;
+	cout << "Enter scalar element :";
+	cin >> scalarElement;
+	for (i =0; i < r; i++)
+	{
+		m[i][i] -= scalarElement;
+	}
+
+}
+
+/*Subtraction of 2 matrix*/
+int** matrixSubtraction(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, int j)
+{
+	int** sub = new int* [r1];
+	for (i = 0; i < r1; i++)
+		sub[i] = new int[c1];
+	for (i = 0; i < r1; i++)
+	{
+		for (j = 0; j < c1; j++)
+		{
+			sub[i][j] = m1[i][j] - m2[i][j];
+		}
+	}
+	return sub;
+}
+
+/*Scalar multiplication*/
+void scalarMultiplication(int** m, int r, int c, int i, int j)
+{
+	int scalarElement = 0;
+	cout << "Enter scalar element :";
+	cin >> scalarElement;
+	for (i = 0; i < r; i++)
+	{
+		m[i][i] *= scalarElement;
+	}
+}
+
+/*Multiplication of 2 Matrix*/
+int** matrixMultiplication(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, int j)
+{
+	int** multi = new int* [r1];
+	for (i = 0; i < r1; i++)
+		multi[i] = new int[c2];
+	for (i = 0; i < r1; i++)
+	{
+		for (j = 0; j < c2; j++)
+		{
+			multi[i][j] = 0;
+			for (int k = 0; k < c2; k++)
+			{
+				multi[i][j] += m1[i][k] * m2[k][j];
+			}
+		}
+	}
+	return multi;
+}
+
+/*Scalar division*/
+void scalarDivision(int** m, int r, int c, int i, int j)
+{
+	int scalarElement = 0;
+	cout << "Enter scalar element :";
+	cin >> scalarElement;
+	for (i = 0; i < r; i++)
+	{
+		m[i][i] /= scalarElement;
+	}
+}
+
+/*Matrix Transpose*/
+void matrixTranspose(int** m, int r, int c, int i, int j)
+{
+	for (int i = 0; i < r; ++i)
+	{
+		for (int j = 0; j < c; ++j) {
+			m[j][i] = m[i][j];
+		}
+	}
+}
+
+/*Determinant fucntion*/
+void dett(int** submatrix,int** m, int* det, int n)
+{
+	if (n == 2)
+		*det= ((m[0][0] * m[1][1]) - (m[1][0] * m[0][1]));
+	else {
+		for (int x = 0; x < n; x++) {
+			int subi = 0;
+			for (int i = 1; i < n; i++) {
+				int subj = 0;
+				for (int j = 0; j < n; j++) {
+					if (j == x)
+						continue;
+					submatrix[subi][subj] = m[i][j];
+					subj++;
+				}
+				subi++;
+			}
+			*det += (pow(-1, x) * m[0][x] * determinant(submatrix, n - 1));
+		}
+	}
+}
+/*Determinant of matrix*/
+int determinant(int** m, int n)
+{
+	int det = 0;
+	int** submatrix=new int*[n];
+	for (int i = 0; i < n; i++)
+		submatrix[i] = new int[n];
+	dett(submatrix,m, &det,n);
+	
+	return det;
+}
+
+/*Inverse of matrix*/
+int** inverse(int** m, int n, int i, int j)
+{
+	int det = 0,inverse=0;
+	det=1/determinant(m, n);
+	int** inv = new int*[n];
+	for ( i = 0; i < n; i++)
+	{
+		inv[i] = new int[n];
+	}
+	j = n-1;
+	for (int i = n; i !=0; i--)
+	{
+		m[j][i] = -1*(m[j][i]);
+	}
+	for (int i = n; i != 0; i--)
+	{
+		for (j =0; j <n; j++)
+		{
+			cout << m[i][j] << " ";
+		}
+		cout << endl;
+	}
+	return inv;
+}
