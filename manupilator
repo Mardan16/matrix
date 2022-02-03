@@ -6,12 +6,9 @@
 using namespace std;
 
 /*Function Prototypes*/
-int** matrix1(int*,int*,int,int);
-int** matrix2(int*, int*,int,int);
-int** fMatrix1(int*, int*, int, int);
-int** fMatrix2(int*, int*, int, int);
-void callm1(int**,int,int,int,int);
-void callm2(int**, int, int, int, int);
+int** matrix(int*,int*,int,int);
+int** fMatrix(int*, int*, int, int);
+void callMatrix(int**,int,int,int,int);
 void operationMenu(int**, int**, int, int, int, int, int, int);
 int sumOfValues(int**, int, int, int, int);
 int  productOfValues(int**, int, int, int, int);
@@ -26,16 +23,18 @@ void scalarSubtraction(int**, int, int, int, int);
 int** matrixSubtraction(int**, int**, int, int, int, int, int, int);
 void scalarMultiplication(int**, int, int, int, int);
 int** matrixMultiplication(int**, int**, int, int, int, int, int, int);
-void scalarDivision(int**, int, int, int, int);
+float** scalarDivision(int**, int, int, int, int);
 void matrixTranspose(int**, int, int, int, int);
 int determinant(int**, int);
-void dett(int**, int** , int*, int);
-int** inverse(int**, int, int, int);
-
+float** inverse(int**, int, int, int);
+void saveValue(int);
+void save1DMatrix(int[],int);
+void save2DMatrix(int**, int, int);
+void save2DMatrixF(float**, int, int);
 
 int main()
 {
-	int chose = 0, rows1 = 0, columns1 = 0, rows2 = 0, columns2 = 0, i = 0, j = 0;
+	int chose = 0, rows1 = 0, columns1 = 0, rows2 = 0, columns2 = 0, i = 0, j = 0,size=0;
 	int** m1, ** m2;
 	cout << "Welcome to my Matrix Manupulator\nThis is a Matrix calculator\nYou can chose between options by clicking their menu number to perform different actions\n";
 	while (true)	/*loop to make the program run untill user wants to exit*/
@@ -50,18 +49,26 @@ int main()
 				cin >> chose;
 				if (chose == 1)
 				{
-					m1 = matrix1(&rows1, &columns1, i, j);
-					m2 = matrix2(&rows2, &columns2, i, j);
-					callm1(m1, rows1, columns1, i, j);
-					cout << endl;
-					callm2(m2, rows2, columns2, i, j);
+					cout << "\nFor Matrix 1 \n";
+					m1 = matrix(&rows1, &columns1, i, j);
+					cout << "\nFor Matrix 2 \n";
+					m2 = matrix(&rows2, &columns2, i, j);
+					callMatrix(m1, rows1, columns1, i, j);
+					callMatrix(m2, rows2, columns2, i, j);
 					cout << endl;
 					operationMenu(m1, m2, rows1, rows2,columns1,columns2, i, j);
 
 				}
 				else if (chose == 2)
 				{
-					/*Functions to read data from file*/
+					cout << "\nFor Matrix 1 \n";
+					m1 = fMatrix(&rows1, &columns1, i, j);
+					cout << "\nFor Matrix 2 \n";
+					m2 = fMatrix(&rows2, &columns2, i, j);
+					callMatrix(m1, rows1, columns1, i, j);
+					callMatrix(m2, rows2, columns2, i, j);
+					cout << endl;
+					operationMenu(m1, m2, rows1, rows2, columns1, columns2, i, j);
 				}
 				else if (chose == 3)
 					break;
@@ -87,10 +94,10 @@ int main()
 
 /*Defining Functions*/
 /*Input of matrix1 by user*/
-int** matrix1(int* r, int* c,int i,int j)
+int** matrix(int* r, int* c,int i,int j)
 {
-	cout << "\n\nMatrix 1";
-	cout << "\nEnter rows : ";
+	
+	cout << "\n\nEnter rows : ";
 	cin >> *r;
 	cout << "Enter columns : ";
 	cin >> *c;
@@ -112,48 +119,37 @@ int** matrix1(int* r, int* c,int i,int j)
 	return matrix;
 }
 
-/*User input of Matrix 2*/
-int** matrix2(int* r, int* c , int i, int j)
-{
-	cout << "\n\nMatrix 2";
-	cout << "\nEnter rows :";
-	cin >> *r;
-	cout << "Enter columns : ";
-	cin >> *c;
-	/*making dynamic array*/
-	int** matrix = new int* [*r];
-	for (i = 0; i < *r; i++)
-	{
-		matrix[i] = new int[*c];
-	}
-	cout << "\nEnter Matrix 1\n";
-	for (i = 0; i < *r; i++)
-	{
-		for (j = 0; j < *c; j++)
-		{
-			cout << "Enter [" << i << "] [" << j << "] : ";
-			cin >> matrix[i][j];
-		}
-	}
-	return matrix;
-}
 
 /*Taking input from files*/
-/*Matrix 1 from file*/
-int** fMatrix1(int* r, int* c, int i, int j)
+int** fMatrix(int* r, int* c, int i, int j)
 {
-	
-	
-	return 0;
+	string fName;
+	ifstream file;
+	cout << "Enter the name of file with extension for matrix : ";
+	cin >> fName;
+	if (!file)
+		cout << "file not found\n";
+	file.open(fName);
+	file >> *r>>*c;
+	int** input = new int* [*r];
+	for ( i = 0; i < *r; i++)
+	{
+		input[i] = new int[*c];
+	}
+	for ( i = 0; i < *r; i++)
+	{
+		for (int j = 0; j < *c; j++)
+		{
+			file >> input[i][j];
+		}
+	}
+	file.close();
+	return input;
 }
 
-int** fMatrix2(int* r, int* c, int i, int j)
-{
-	return 0;
-}
 
 /*to get values from matrix*/
-void callm1(int** m,int r, int c, int i, int j)
+void callMatrix(int** m,int r, int c, int i, int j)
 {
 	cout << "\n\t\t\t1st matrix\n";
 	for (i = 0; i < r; i++)
@@ -166,24 +162,14 @@ void callm1(int** m,int r, int c, int i, int j)
 	}
 }
 
-void callm2(int** m, int r, int c, int i, int j)
-{
-	cout << "\n\t\t\t2nd matrix\n";
-	for (i = 0; i < r; i++)
-	{
-		for (j = 0; j < c; j++)
-		{
-			cout << m[i][j] << " ";
-		}
-		cout << endl;
-	}
-}
 
 /*Operations to be performed on matrices*/
 void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, int j)
 {
-	int chose=0,Avg=0,det=0;
+	int chose=0,Avg=0,det=0,resultValue=0;
+	char option = '\0';
 	int* avg=nullptr,**result=nullptr;
+	float** results = nullptr;
 	do
 	{	
 		cout << "\n\n------------------------------------------------------------------------------------------ - \n\n";
@@ -194,9 +180,23 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 			cout << "\nEnter a matrix \n 1 or 2\n";
 			cin >> chose;
 			if (chose == 1)
-				cout << "Sum of Matrix 1 is : " << sumOfValues(m1, r1, c1, i, j) << endl;
+				{
+					resultValue = sumOfValues(m1, r1, c1, i, j);
+					cout << "Sum of Matrix 1 is : " << resultValue << endl;
+					cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+					cin >> option;
+					if (option == 'Y' || option == 'y')
+						saveValue(resultValue);
+				}
 			else if (chose == 2)
-				cout << "Sum of Matrix 2 is : " << sumOfValues(m2, r2, c2, i, j) << endl;
+				{
+					resultValue = sumOfValues(m2, r2, c2, i, j);
+					cout << "Sum of Matrix 2 is : " << resultValue << endl;
+					cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+					cin >> option;
+					if (option == 'Y' || option == 'y')
+						saveValue(resultValue);
+				}
 			else
 				cout << "You have entered the wrong option\n";
 		}
@@ -205,9 +205,23 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 			cout << "\nEnter a matrix \n 1 or 2\n";
 			cin >> chose;
 			if (chose == 1)
-				cout << "Product of Matrix 1 is : " << productOfValues(m1, r1, c1, i, j) << endl;
+				{
+					resultValue = productOfValues(m1, r1, c1, i, j);
+					cout << "Product of Matrix 1 is : " << resultValue << endl;
+					cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+					cin >> option;
+					if (option == 'Y' || option == 'y')
+						saveValue(resultValue);
+				}
 			else if (chose == 2)
-				cout << "Product of Matrix 2 is : " << productOfValues(m2, r2, c2, i, j) << endl;
+				{
+					resultValue = productOfValues(m2, r2, c2, i, j);
+					cout << "Product of Matrix 1 is : " << resultValue << endl;
+					cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+					cin >> option;
+					if (option == 'Y' || option == 'y')
+						saveValue(resultValue);
+				}
 			else
 				cout << "You have entered the wrong option\n";
 		}
@@ -221,8 +235,12 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				cout << "Matrix 1\n";
 				for ( i = 0; i < r1; i++)
 				{
-					cout << "Average of row " << i + 1 << " is :" << *(avg+i) << endl;;
+					cout << "Average of row " << i + 1 << " is :" << *(avg+i) << endl;
 				}
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save1DMatrix(avg,r1);
 			}
 			else if (chose == 2)
 			{
@@ -232,6 +250,10 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				{
 					cout << "Average of row " << i + 1 << " is :" << *(avg+i) << endl;;
 				}
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save1DMatrix(avg, r1);
 			}
 			else
 				cout << "You have entered the wrong option\n";
@@ -248,6 +270,10 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				{
 					cout << "Average of column " << i + 1 << " is :" << *(avg + i) << endl;;
 				}
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save1DMatrix(avg, r1);
 			}
 			else if (chose == 2)
 			{
@@ -257,6 +283,10 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				{
 					cout << "Average of column " << i + 1 << " is :" << *(avg + i) << endl;;
 				}
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save1DMatrix(avg, r1);
 			}
 			else
 				cout << "You have entered the wrong option\n";
@@ -270,13 +300,20 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				Avg = AvgOfMatrix(m1, r1, c1, i, j);
 				cout << "Matrix 1\n";
 				cout << "Average of Matrix 1 is : " << Avg << endl;
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save1DMatrix(avg, r1);
 			}
 			else if (chose == 2)
 			{
 				Avg = AvgOfMatrix(m2, r2, c2, i, j);
 				cout << "Matrix 2\n";
 				cout << "Average of Matrix 2 " << " is : " << Avg << endl;;
-
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save1DMatrix(avg, r1);
 			}
 			else
 				cout << "You have entered the wrong option\n";
@@ -289,13 +326,22 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 			{
 				rowSortOfMatrix(m1, r1, c1, i, j);
 				cout << "Matrix 1 after sorting of rows\n\n";
-				callm1(m1,r1,c1,i,j);
+				callMatrix(m1,r1,c1,i,j);
+				cout << endl;
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrix(m1, r1,c1);
 			}
 			else if (chose == 2)
 			{
 				rowSortOfMatrix(m2, r2, c2, i, j);
 				cout << "Matrix 2 after sorting of rows\n\n";
-				callm2(m2, r2, c2, i, j);
+				callMatrix(m2, r2, c2, i, j);
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrix(m2, r2, c2);
 			}
 			else
 				cout << "You have entered the wrong option\n";
@@ -308,13 +354,21 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 			{
 				columnSortOfMatrix(m1, r1, c1, i, j);
 				cout << "Matrix 1 after sorting of columns\n\n";
-				callm1(m1, r1, c1, i, j);
+				callMatrix(m1, r1, c1, i, j);
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrix(m1, r1, c1);
 			}
 			else if (chose == 2)
 			{
 				columnSortOfMatrix(m2, r2, c2, i, j);
 				cout << "Matrix 2 after sorting of columns\n\n";
-				callm2(m2, r2, c2, i, j);
+				callMatrix(m2, r2, c2, i, j);
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrix(m2, r2, c2);
 			}
 			else
 				cout << "You have entered the wrong option\n";
@@ -332,7 +386,11 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				}
 				scalarAdition(m1, r1, c1, i, j);
 				cout << "\nAfter Scalar adition\n";
-				callm1(m1, r1, c1, i, j);
+				callMatrix(m1, r1, c1, i, j);
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrix(m1, r1, c1);
 			}
 			else if (chose == 2)
 			{
@@ -343,7 +401,11 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				}
 				scalarAdition(m2, r2, c2, i, j);
 				cout << "\nAfter Scalar adition\n";
-				callm1(m1, r1, c1, i, j);
+				callMatrix(m2, r2, c2, i, j);
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrix(m2, r2, c2);
 			}
 			else
 				cout << "You have entered the wrong option\n";
@@ -366,6 +428,11 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 					}
 					cout << endl;
 				}
+				cout << endl;
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrix(result, r1, c1);
 			
 		}
 		else if (chose == 10)
@@ -381,7 +448,11 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				}
 				scalarSubtraction(m1, r1, c1, i, j);
 				cout << "\nAfter Scalar Subtraction\n";
-				callm1(m1, r1, c1, i, j);
+				callMatrix(m1, r1, c1, i, j);
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrix(m1, r1, c1);
 			}
 			else if (chose == 2)
 			{
@@ -392,7 +463,11 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				}
 				scalarSubtraction(m2, r2, c2, i, j);
 				cout << "\nAfter Scalar Subtraction\n";
-				callm1(m1, r1, c1, i, j);
+				callMatrix(m2, r2, c2, i, j);
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrix(m2, r2, c2);
 			}
 			else
 				cout << "You have entered the wrong option\n";
@@ -415,6 +490,11 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				}
 				cout << endl;
 			}
+			cout << endl;
+			cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+			cin >> option;
+			if (option == 'Y' || option == 'y')
+				save2DMatrix(result, r1, c1);
 		}
 		else if (chose == 12)
 		{
@@ -429,7 +509,11 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				}
 				scalarMultiplication(m1, r1, c1, i, j);
 				cout << "\nAfter Scalar Multiplication\n";
-				callm1(m1, r1, c1, i, j);
+				callMatrix(m1, r1, c1, i, j);
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrix(m1, r1, c1);
 			}
 			else if (chose == 2)
 			{
@@ -440,7 +524,11 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				}
 				scalarMultiplication(m2, r2, c2, i, j);
 				cout << "\nAfter Scalar Multiplication\n";
-				callm1(m1, r1, c1, i, j);
+				callMatrix(m1, r1, c1, i, j);
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrix(m2, r2, c2);
 			}
 			else
 				cout << "You have entered the wrong option\n";
@@ -462,6 +550,11 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				}
 				cout << endl;
 			}
+			cout << endl;
+			cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+			cin >> option;
+			if (option == 'Y' || option == 'y')
+				save2DMatrix(result, r1, c1);
 		}
 		else if (chose == 14)
 		{
@@ -474,9 +567,20 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 					cout << "Rows and columns of matrix are not equal\n";
 					break;
 				}
-				scalarDivision(m1, r1, c1, i, j);
+				results=scalarDivision(m1, r1, c1, i, j);
 				cout << "\nAfter Scalar Division\n";
-				callm1(m1, r1, c1, i, j);
+				for ( i = 0; i < r1; i++)
+				{
+					for  ( j = 0;  j < c1;  j++)
+					{
+						cout << results[i][j] << " ";
+					}
+					cout << endl;
+				}
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrixF(results, r1, c1);
 			}
 			else if (chose == 2)
 			{
@@ -485,9 +589,20 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 					cout << "Rows and columns of matrix are not equal\n";
 					break;
 				}
-				scalarDivision(m1, r1, c1, i, j);
+				results = scalarDivision(m2, r2, c2, i, j);
 				cout << "\nAfter Scalar Division\n";
-				callm1(m1, r1, c1, i, j);
+				for (i = 0; i < r2; i++)
+				{
+					for (j = 0; j < c2; j++)
+					{
+						cout << results[i][j] << " ";
+					}
+					cout << endl;
+				}
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrixF(results, r2, c2);
 			}
 			else
 				cout << "You have entered the wrong option\n";
@@ -505,7 +620,11 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				}
 				matrixTranspose(m1, r1, c1, i, j);
 				cout << "\nAfter Transpose\n";
-				callm1(m1, r1, c1, i, j);
+				callMatrix(m1, r1, c1, i, j);
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrix(m1, r1, c1);
 			}
 			else if (chose == 2)
 			{
@@ -516,7 +635,11 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				}
 				matrixTranspose(m2, r2, c2, i, j);
 				cout << "\nAfter Transpose\n";
-				callm1(m1, r1, c1, i, j);
+				callMatrix(m2, r2, c2, i, j);
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrix(m2, r2, c2);
 			}
 			else
 				cout << "You have entered the wrong option\n";
@@ -534,6 +657,10 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				}
 				det = determinant(m1, r1);
 				cout << "\nDeterminant of 1st matrix is : " << det << endl;
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					saveValue(det);
 			}
 			else if (chose == 2)
 			{
@@ -544,6 +671,10 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 				}
 				det = determinant(m2, r2);
 				cout << "\nDeterminant of 1st matrix is : "<<det<<endl;
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					saveValue(det);
 				
 			}
 			else
@@ -560,34 +691,42 @@ void operationMenu(int** m1, int** m2, int r1, int r2, int c1, int c2, int i, in
 					cout << "Rows and columns of matrix are not equal\n";
 					break;
 				}
-				result = inverse(m1, r1,i,j);
+				results = inverse(m1, r1,i,j);
 				cout << "\nInverse of 1st matrix is : " << det << endl;
 				for ( i = 0; i < r1; i++)
 				{
 					for ( j = 0; j < r1; j++)
 					{
-						cout<<result[i][j] << " ";
+						cout<<results[i][j] << " ";
 					}
 					cout << endl;
 				}
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrixF(results, r1, c1);
 			}
 			else if (chose == 2)
 			{
-				if (!(r1 == c1))
+				if (!(r2 == c2))
 				{
 					cout << "Rows and columns of matrix are not equal\n";
 					break;
 				}
-				result = inverse(m2, r2, i, j);
+				results = inverse(m2, r2, i, j);
 				cout << "\nInverse of 1st matrix is : " << det << endl;
 				for (i = 0; i < r2; i++)
 				{
 					for (j = 0; j < r2; j++)
 					{
-						cout << result[i][j] << " ";
+						cout << results[i][j] << " ";
 					}
 					cout << endl;
 				}
+				cout << "If you want to save the result in a file press 'Y' or any other key to exit :";
+				cin >> option;
+				if (option == 'Y' || option == 'y')
+					save2DMatrixF(results, r1, c1);
 			}
 			else
 				cout << "You have entered the wrong option\n";
@@ -817,15 +956,27 @@ int** matrixMultiplication(int** m1, int** m2, int r1, int r2, int c1, int c2, i
 }
 
 /*Scalar division*/
-void scalarDivision(int** m, int r, int c, int i, int j)
+float** scalarDivision(int** m, int r, int c, int i, int j)
 {
-	int scalarElement = 0;
+
+	float scalarElement = 0;
+	float** arr = new float* [r];
+	for (i = 0; i < r; i++)
+		arr[i] = new float[c];
 	cout << "Enter scalar element :";
 	cin >> scalarElement;
+	for ( i = 0; i < r; i++)
+	{
+		for ( j = 0; j < c; j++)
+		{
+			arr[i][j] = m[i][j];
+		}
+	}
 	for (i = 0; i < r; i++)
 	{
-		m[i][i] /= scalarElement;
+		arr[i][i] /= scalarElement;
 	}
+	return arr;
 }
 
 /*Matrix Transpose*/
@@ -839,28 +990,6 @@ void matrixTranspose(int** m, int r, int c, int i, int j)
 	}
 }
 
-/*Determinant fucntion*/
-void dett(int** submatrix,int** m, int* det, int n)
-{
-	if (n == 2)
-		*det= ((m[0][0] * m[1][1]) - (m[1][0] * m[0][1]));
-	else {
-		for (int x = 0; x < n; x++) {
-			int subi = 0;
-			for (int i = 1; i < n; i++) {
-				int subj = 0;
-				for (int j = 0; j < n; j++) {
-					if (j == x)
-						continue;
-					submatrix[subi][subj] = m[i][j];
-					subj++;
-				}
-				subi++;
-			}
-			*det += (pow(-1, x) * m[0][x] * determinant(submatrix, n - 1));
-		}
-	}
-}
 /*Determinant of matrix*/
 int determinant(int** m, int n)
 {
@@ -868,33 +997,126 @@ int determinant(int** m, int n)
 	int** submatrix=new int*[n];
 	for (int i = 0; i < n; i++)
 		submatrix[i] = new int[n];
-	dett(submatrix,m, &det,n);
-	
+	if (n == 2)
+		 return ((m[0][0] * m[1][1]) - (m[1][0] * m[0][1]));
+	else 
+	{
+		for (int x = 0; x < n; x++)
+		{
+			int subi = 0;
+			for (int i = 1; i < n; i++)
+			{
+				int subj = 0;
+				for (int j = 0; j < n; j++) 
+				{
+					if (j == x)
+						continue;
+					submatrix[subi][subj] = m[i][j];
+					subj++;
+				}
+				subi++;
+			}
+			det += (pow(-1, x) * m[0][x] * determinant(submatrix, n - 1));
+		}
+	}
 	return det;
 }
 
 /*Inverse of matrix*/
-int** inverse(int** m, int n, int i, int j)
+float** inverse(int** m, int n, int i, int j)
 {
-	int det = 0,inverse=0;
-	det=1/determinant(m, n);
-	int** inv = new int*[n];
+	float det = 0;
+	det=(0.5*determinant(m, n));
+	cout << det << endl;
+	float** inv = new float*[n];
 	for ( i = 0; i < n; i++)
 	{
-		inv[i] = new int[n];
+		inv[i] = new float[n];
 	}
-	j = n-1;
-	for (int i = n; i !=0; i--)
+	j = 0;
+	for ( i = n; i != 0; i--)
 	{
-		m[j][i] = -1*(m[j][i]);
+		m[i-1][j] = -1 * m[i-1][j];
+		j++;
 	}
-	for (int i = n; i != 0; i--)
+	for ( i = 0; i < n; i++)
 	{
-		for (j =0; j <n; j++)
+		for ( j = 0; j < n; j++)
 		{
-			cout << m[i][j] << " ";
+			inv[i][j] = det * m[i][j];
+		}
+	}
+	return inv;
+}
+
+/*File saving*/
+void saveValue(int result)
+{
+	string name;
+	ofstream file;
+
+	cout << "Enter the name of fime you want to save with extention : ";
+	cin >> name;
+	file.open(name);
+	if (!file)
+		cout << "File not found" << endl;
+	file << result;
+	file.close();
+	cout << "File with name " << name << " has been saved " << endl;
+
+}
+void save1DMatrix(int result[], int size)
+{
+	string name;
+	ofstream file;
+	cout << "Enter the name of fime you want to save with extention : ";
+	cin >> name;
+	file.open(name);
+	if (!file)
+		cout << "File not found" << endl;
+	for ( int i = 0;  i < size; i++)
+		file << result[i];
+	file.close();
+	cout << "File with name " << name << " has been saved " << endl;
+
+}
+void save2DMatrix(int** m, int r, int c)
+{
+	string name;
+	ofstream file;
+	cout << "Enter the name of fime you want to save with extention : ";
+	cin >> name;
+	file.open(name);
+	if (!file)
+		cout << "File not found" << endl;
+	for (int i = 0; i < r; i++)
+	{
+		for (int j = 0; j < c; j++)
+		{
+			file << m[i][j] << " ";
 		}
 		cout << endl;
 	}
-	return inv;
+	file.close();
+	cout << "File with name " << name << " has been saved " << endl;
+}
+void save2DMatrixF(float** m, int r, int c)
+{
+	string name;
+	ofstream file;
+	cout << "Enter the name of fime you want to save with extention : ";
+	cin >> name;
+	file.open(name);
+	if (!file)
+		cout << "File not found" << endl;
+	for (int i = 0; i < r; i++)
+	{
+		for (int j = 0; j < c; j++)
+		{
+			file << m[i][j] << " ";
+		}
+		cout << endl;
+	}
+	file.close();
+	cout << "File with name " << name << " has been saved " << endl;
 }
